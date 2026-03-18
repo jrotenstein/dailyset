@@ -26,6 +26,7 @@ function App() {
   });
   const [explosions, setExplosions] = useState([]);
   const [copyButtonText, setCopyButtonText] = useState('Copy');
+  const [shareButtonText, setShareButtonText] = useState('Share Result');
   const [seedDate, setSeedDate] = useState('');
   const [showPuzzleTime, setShowPuzzleTime] = useState(false);
   const cardRefs = useRef(new Map());
@@ -68,6 +69,7 @@ function App() {
     setElapsedTime(0);
     setExplosions([]);
     setCopyButtonText('Copy');
+    setShareButtonText('Share Result');
     cardRefs.current.clear();
   }, []);
 
@@ -182,6 +184,17 @@ function App() {
     setTimeout(() => setCopyButtonText('Copy'), 2000);
   };
 
+  const handleShareResult = () => {
+    const timeInSeconds = Math.round(elapsedTime / 1000);
+    const today = new Date();
+    const pad = (n) => String(n).padStart(2, '0');
+    const dateStr = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;
+    const text = `Daily SET\n${dateStr}\n${timeInSeconds} seconds\nPlay it yourself at: https://defaultnamehere.github.io/dailyset/`;
+    navigator.clipboard.writeText(text);
+    setShareButtonText('Copied!');
+    setTimeout(() => setShareButtonText('Share Result'), 2000);
+  };
+
   return (
     <div className="">
       {isGameWon && <Confetti width={windowSize.width} height={windowSize.height} />}
@@ -249,9 +262,12 @@ function App() {
                 <p className="congrats">Puzzle clear!</p>
                 <div className="time-display">
                   <p className="timer">You solved today's puzzle in:</p>
-                  <p>{formatTime(elapsedTime)}</p>
-                  <button onClick={handleCopyTime} className={`copy-button ${copyButtonText === 'Copied!' ? 'copied' : ''}`}>
+                  <p style={{ margin: 0 }}>{formatTime(elapsedTime)}</p>
+                  <button onClick={handleCopyTime} className={`copy-button ${copyButtonText === 'Copied!' ? 'copied' : ''}`} style={{ fontSize: '0.75em', padding: '2px 8px', minWidth: 'unset', alignSelf: 'center' }}>
                     {copyButtonText}
+                  </button>
+                  <button onClick={handleShareResult} className={`copy-button ${shareButtonText === 'Copied!' ? 'copied' : ''}`}>
+                    {shareButtonText}
                   </button>
                 </div>
               </div>
